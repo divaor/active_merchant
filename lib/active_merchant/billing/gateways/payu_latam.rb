@@ -60,6 +60,39 @@ module ActiveMerchant #:nodoc:
         commit('capture', post)
       end
 
+      def cash(reference, amount, email, expiration_date, notify_url)
+        post = 
+        {
+          language: "es",
+          command: "SUBMIT_TRANSACTION",
+          merchant: {
+            apiKey: @options[:api_key],
+            apiLogin: @options[:api_login]
+          },
+          transaction: {
+            order: {
+                accountId: @options[:account_id],
+                referenceCode: "payment_test_00000001",
+                description: "payment test",
+                language: "es",
+                notifyUrl: notify_url,
+                buyer: {
+                  emailAddress: email
+                }
+            },
+            type: "AUTHORIZATION_AND_CAPTURE",
+            paymentMethod: "OXXO",
+            expirationDate: expiration_date,
+            paymentCountry: "MX",
+            ipAddress: ""
+          },
+          test: "false"
+        }
+        add_invoice(post, amount, {:currency => "MXN"})
+        add_signature(post)
+        commit('cash', post)
+      end
+
       def void(authorization, options={})
         post = {}
 
